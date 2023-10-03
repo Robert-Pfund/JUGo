@@ -1,1 +1,25 @@
-{"Items":[{"ID":"","Jugdata":null},{"ID":"001","Jugdata":{"Firstname":"Peter","Lastname":"Altmeier"}}]}
+[{
+    "ID": "001",
+    "Content": {
+        "Firstname": "Maria",
+        "Lastname": "Berg"
+    }
+}, {
+    "ID": "002",
+    "Content": {
+        "Firstname": "Peter",
+        "Lastname": "Altmeier"
+    }
+}, {
+    "ID": "003",
+    "Content": {
+        "Firstname": "Otto",
+        "Lastname": "Müller"
+    }
+}, {
+    "ID": "004",
+    "Content": {
+        "Idk": 4,
+        "Hello": "Hello"
+    }
+}]
