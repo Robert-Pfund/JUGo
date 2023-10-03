@@ -62,7 +62,7 @@ func Write(id string, data JugData) {
 	os.WriteFile(location, json, 0644)
 }
 
-func Read() {
+func GetAll() []byte {
 
 	var location string = os.Getenv("DEFAULTFILENAME")
 
@@ -73,8 +73,48 @@ func Read() {
 	json, err := os.ReadFile(location)
 	utilities.Check(err)
 
-	log.Printf("JSON from Read: %s\n", json)
+	log.Printf("JSON from GetAll: %s\n", json)
 
-	s := gjson.Get(string(json), "Data")
-	log.Printf("GJSON from Read: %s\n", s)
+	return json
+}
+
+func GetById(id string) int {
+
+	var location string = os.Getenv("DEFAULTFILENAME")
+
+	file, err := os.Open(location)
+	utilities.Check(err)
+	defer file.Close()
+
+	/*
+		json, err := os.ReadFile(location)
+		utilities.Check(err)
+	*/
+
+	var found_index int
+
+	for i := range DB {
+		data, err := json.Marshal(DB[i])
+		utilities.Check(err)
+
+		found_id := gjson.Get(string(data), "ID")
+		if found_id.Str == id {
+
+			log.Println("Success")
+			found_index = i
+			log.Printf("Found ID at position: %s\n", string(rune(found_index)))
+			return found_index
+		}
+	}
+
+	return 404
+
+	/*
+		m, err := json.Marshal(DB[0])
+		utilities.Check(err)
+		log.Printf("element m from DB: %s\n", m)
+
+		ids := gjson.Get(string(m), "ID")
+		log.Printf("Got following ids from GJSON: %s\n", ids)
+	*/
 }

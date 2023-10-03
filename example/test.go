@@ -39,11 +39,14 @@ func RunTest() {
 	domain.Connect()
 	domain.Write("001", booking1)
 	domain.Write("002", booking2)
-	domain.Read()
+	domain.GetAll()
 	/*
 		domain.Write("003", booking3)
 		domain.Read()
 		domain.Write("004", oopsie)
 		domain.Read()
 	*/
+
+	domain.GetById("001")
+	// domain.GetById("999")
 }
