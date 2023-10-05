@@ -1,6 +1,10 @@
 package example
 
-import "github.com/Robert-Pfund/json-JUGo/domain"
+import (
+	"fmt"
+
+	"github.com/Robert-Pfund/json-JUGo/domain"
+)
 
 type Booking struct {
 	Firstname string
@@ -47,6 +51,7 @@ func RunTest() {
 		domain.Read()
 	*/
 
-	domain.GetById("001")
+	id := domain.GetById("002")
+	fmt.Println(id)
 	// domain.GetById("999")
 }

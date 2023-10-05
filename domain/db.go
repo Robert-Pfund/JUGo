@@ -91,8 +91,6 @@ func GetById(id string) int {
 		utilities.Check(err)
 	*/
 
-	var found_index int
-
 	for i := range DB {
 		data, err := json.Marshal(DB[i])
 		utilities.Check(err)
@@ -101,9 +99,8 @@ func GetById(id string) int {
 		if found_id.Str == id {
 
 			log.Println("Success")
-			found_index = i
-			log.Printf("Found ID at position: %s\n", string(rune(found_index)))
-			return found_index
+			log.Printf("Found ID at position: %s\n", string(rune(i)))
+			return i
 		}
 	}
 
