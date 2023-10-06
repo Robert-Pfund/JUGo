@@ -75,7 +75,7 @@ func GetAll() []Jug {
 	data, err := os.ReadFile(location)
 	utilities.Check(err)
 
-	log.Printf("Data from Get: %s\n", data)
+	log.Printf("Data from GetAll: %s\n", data)
 
 	dec := json.NewDecoder(strings.NewReader(string(data)))
 	for {
@@ -123,4 +123,14 @@ func Get(id string) JugData {
 	}
 
 	return DB
+}
+
+func Delete(id string) {
+
+	DB := GetAll()
+	for _, j := range DB {
+		if j.ID != id {
+			Write(j.ID, j.Content)
+		}
+	}
 }
