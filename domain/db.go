@@ -70,15 +70,15 @@ func GetAll() []byte {
 	utilities.Check(err)
 	defer file.Close()
 
-	json, err := os.ReadFile(location)
+	data, err := os.ReadFile(location)
 	utilities.Check(err)
 
-	log.Printf("JSON from GetAll: %s\n", json)
+	log.Printf("Data from GetAll: %s\n", data)
 
-	return json
+	return data
 }
 
-func GetById(id string) int {
+func Get(id string) []byte {
 
 	var location string = os.Getenv("DEFAULTFILENAME")
 
@@ -86,10 +86,41 @@ func GetById(id string) int {
 	utilities.Check(err)
 	defer file.Close()
 
-	/*
-		json, err := os.ReadFile(location)
-		utilities.Check(err)
-	*/
+	data, err := os.ReadFile(location)
+	utilities.Check(err)
+
+	log.Printf("Data from GetAll: %s\n", data)
+
+	return data
+}
+
+func GetById(id string) Jug {
+
+	var location string = os.Getenv("DEFAULTFILENAME")
+
+	file, err := os.Open(location)
+	utilities.Check(err)
+	defer file.Close()
+
+	data, err := os.ReadFile(location)
+	utilities.Check(err)
+
+	position := FindById(id)
+
+	log.Println(data)
+	log.Println("position: ")
+	log.Println(position)
+
+	m := DB[position]
+
+	return m
+}
+
+func Delete(id string) {
+
+}
+
+func FindById(id string) int {
 
 	for i := range DB {
 		data, err := json.Marshal(DB[i])
@@ -99,19 +130,9 @@ func GetById(id string) int {
 		if found_id.Str == id {
 
 			log.Println("Success")
-			log.Printf("Found ID at position: %s\n", string(rune(i)))
 			return i
 		}
 	}
 
 	return 404
-
-	/*
-		m, err := json.Marshal(DB[0])
-		utilities.Check(err)
-		log.Printf("element m from DB: %s\n", m)
-
-		ids := gjson.Get(string(m), "ID")
-		log.Printf("Got following ids from GJSON: %s\n", ids)
-	*/
 }
