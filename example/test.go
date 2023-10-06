@@ -1,11 +1,9 @@
 package example
 
 import (
-	"encoding/json"
-	"fmt"
+	"log"
 
 	"github.com/Robert-Pfund/json-JUGo/domain"
-	"github.com/Robert-Pfund/json-JUGo/utilities"
 )
 
 type Booking struct {
@@ -47,7 +45,12 @@ func RunTest() {
 		domain.Write("001", booking1)
 		domain.Write("002", booking2)
 	*/
-	domain.GetAll()
+
+	//d1 := domain.GetAll()
+	//log.Print("d1: ")
+	//log.Println(d1)
+	//log.Println(d1[0])
+
 	/*
 		domain.Write("003", booking3)
 		domain.Read()
@@ -55,23 +58,27 @@ func RunTest() {
 		domain.Read()
 	*/
 
-	jug1 := domain.GetById("002")
-	fmt.Println(jug1)
+	d2 := domain.Get("002")
+	log.Print("d2: ")
+	log.Println(d2)
 
 	/*
 		id2 := domain.GetById("999")
 		fmt.Println(id2)
 	*/
 
-	content, err := json.Marshal(jug1.Content)
-	utilities.Check(err)
+	/*
+		content, err := json.Marshal(jug1.Content)
+		utilities.Check(err)
 
-	b1 := &Booking{
-		Firstname: string(content),
-		Lastname:  string(content),
-	}
+		b1 := &Booking{
+			Firstname: string(content),
+			Lastname:  string(content),
+		}
 
-	fmt.Println(b1)
+		fmt.Println(b1)
+
+	*/
 	// Ausgabe:
 	// &{{"Firstname":"Peter","Lastname":"Altmeier"} {"Firstname":"Peter","Lastname":"Altmeier"}}
 	// --> weiter mit gjson

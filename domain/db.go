@@ -2,15 +2,14 @@ package domain
 
 import (
 	"encoding/json"
+	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/Robert-Pfund/json-JUGo/utilities"
 	"github.com/joho/godotenv"
-	"github.com/tidwall/gjson"
 )
-
-var DB []Jug
 
 type Jug struct {
 	ID      string
@@ -42,6 +41,8 @@ func Connect() { //*Jug {
 
 func Write(id string, data JugData) {
 
+	var DB []Jug
+
 	var location string = os.Getenv("DEFAULTFILENAME")
 
 	file, err := os.Open(location)
@@ -62,9 +63,10 @@ func Write(id string, data JugData) {
 	os.WriteFile(location, json, 0644)
 }
 
-func GetAll() []byte {
+func GetAll() []Jug {
 
 	var location string = os.Getenv("DEFAULTFILENAME")
+	var DB []Jug
 
 	file, err := os.Open(location)
 	utilities.Check(err)
@@ -73,66 +75,52 @@ func GetAll() []byte {
 	data, err := os.ReadFile(location)
 	utilities.Check(err)
 
-	log.Printf("Data from GetAll: %s\n", data)
+	log.Printf("Data from Get: %s\n", data)
 
-	return data
-}
+	dec := json.NewDecoder(strings.NewReader(string(data)))
+	for {
 
-func Get(id string) []byte {
-
-	var location string = os.Getenv("DEFAULTFILENAME")
-
-	file, err := os.Open(location)
-	utilities.Check(err)
-	defer file.Close()
-
-	data, err := os.ReadFile(location)
-	utilities.Check(err)
-
-	log.Printf("Data from GetAll: %s\n", data)
-
-	return data
-}
-
-func GetById(id string) Jug {
-
-	var location string = os.Getenv("DEFAULTFILENAME")
-
-	file, err := os.Open(location)
-	utilities.Check(err)
-	defer file.Close()
-
-	data, err := os.ReadFile(location)
-	utilities.Check(err)
-
-	position := FindById(id)
-
-	log.Println(data)
-	log.Println("position: ")
-	log.Println(position)
-
-	m := DB[position]
-
-	return m
-}
-
-func Delete(id string) {
-
-}
-
-func FindById(id string) int {
-
-	for i := range DB {
-		data, err := json.Marshal(DB[i])
-		utilities.Check(err)
-
-		found_id := gjson.Get(string(data), "ID")
-		if found_id.Str == id {
-
-			log.Println("Success")
-			return i
+		if err := dec.Decode(&DB); err == io.EOF {
+			break
+		} else if err != nil {
+			utilities.Check(err)
 		}
 	}
 
-	return 404
+	return DB
+}
+
+func Get(id string) JugData {
+
+	var location string = os.Getenv("DEFAULTFILENAME")
+	var DB []Jug
+
+	file, err := os.Open(location)
+	utilities.Check(err)
+	defer file.Close()
+
+	data, err := os.ReadFile(location)
+	utilities.Check(err)
+
+	//log.Printf("Data from Get: %s\n", data)
+
+	dec := json.NewDecoder(strings.NewReader(string(data)))
+
+	for {
+		if err := dec.Decode(&DB); err == io.EOF {
+			break
+		} else if err != nil {
+			utilities.Check(err)
+		}
+
+		log.Printf("jug Content from Get: %s\n", DB)
+	}
+
+	for i, j := range DB {
+		if j.ID == id {
+			return DB[i].Content
+		}
+	}
+
+	return DB
 }
