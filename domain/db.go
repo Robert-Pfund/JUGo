@@ -51,12 +51,14 @@ func Save(id string, data JugData) {
 }
 
 // Edit rewrites data correlating to the given id to the json-File
+//
+// Internally Edit is just Save preceeded by a Delete of the previous entry correlating to the given id
 func Edit(id string, data JugData) {
 
 	Write(id, data, 1)
 }
 
-// Write saves input data under the given id to the json-File
+// Write performs the actual storing of data in json-Files
 func Write(id string, data JugData, mode int) {
 
 	if mode != 0 {
