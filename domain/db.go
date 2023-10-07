@@ -44,8 +44,24 @@ func Connect() {
 	log.Printf("Data Storage set up at: %s\n", file)
 }
 
-// Write saves  input data under the given id to the json-File
-func Write(id string, data JugData) {
+// Save writes the given data under the given id to the json-File
+func Save(id string, data JugData) {
+
+	Write(id, data, 0)
+}
+
+// Edit rewrites data correlating to the given id to the json-File
+func Edit(id string, data JugData) {
+
+	Write(id, data, 1)
+}
+
+// Write saves input data under the given id to the json-File
+func Write(id string, data JugData, mode int) {
+
+	if mode != 0 {
+		Delete(id)
+	}
 
 	var DB []Jug
 

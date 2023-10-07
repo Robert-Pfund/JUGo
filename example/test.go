@@ -25,7 +25,7 @@ func RunTest() {
 	}
 
 	// Save some custom struct to json-File
-	domain.Write("001", b1)
+	domain.Save("001", b1)
 
 	// Read some data from json-File by id
 	domain.Get("001")
@@ -37,7 +37,7 @@ func RunTest() {
 		Lastname:  "Johnson",
 	}
 
-	domain.Write("002", b2)
+	domain.Save("002", b2)
 
 	// Read all data from json-File
 	domain.GetAll()
@@ -51,4 +51,16 @@ func RunTest() {
 
 	domain.GetAll()
 
+	//--------------------------------------
+
+	b2_new := Booking{
+		Firstname: "Erich",
+		Lastname:  "Haupt",
+	}
+
+	domain.Get("002")
+
+	domain.Edit("002", b2_new)
+
+	domain.Get("002")
 }
