@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Robert-Pfund/json-JUGo/example"
+	"github.com/Robert-Pfund/JUGo/example"
 )
 
 type TestData struct {

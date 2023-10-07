@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Robert-Pfund/json-JUGo/utilities"
+	"github.com/Robert-Pfund/JUGo/utilities"
 	"github.com/joho/godotenv"
 )
 

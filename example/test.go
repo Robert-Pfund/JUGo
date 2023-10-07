@@ -1,6 +1,6 @@
 package example
 
-import "github.com/Robert-Pfund/json-JUGo/domain"
+import "github.com/Robert-Pfund/JUGo/domain"
 
 type Booking struct {
 	Firstname string
