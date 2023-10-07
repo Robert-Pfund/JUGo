@@ -115,8 +115,6 @@ func Get(id string) JugData {
 	data, err := os.ReadFile(location)
 	utilities.Check(err)
 
-	//log.Printf("Data from Get: %s\n", data)
-
 	dec := json.NewDecoder(strings.NewReader(string(data)))
 
 	for {
