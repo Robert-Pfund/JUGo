@@ -18,7 +18,12 @@ type Jug struct {
 
 type JugData interface{}
 
-func Connect() { //*Jug {
+// Needed before calling other JUGo-functions. Sets up:
+//
+// (1) .env-File (creates one, if not-existant) and sets DEFAULTFILENAME for the jug.json-File
+//
+// (2) the data-directory and jug.json-File in which the Jugs will be stored
+func Connect() {
 
 	defaultlocation := "data/jug.json"
 
@@ -39,6 +44,7 @@ func Connect() { //*Jug {
 	log.Printf("Data Storage set up at: %s\n", file)
 }
 
+// Write saves  input data under the given id to the json-File
 func Write(id string, data JugData) {
 
 	var DB []Jug
@@ -76,6 +82,7 @@ func Write(id string, data JugData) {
 	os.WriteFile(location, db_json, 0644)
 }
 
+// GetAll returns a list of all Jugs saved to the json-File
 func GetAll() []Jug {
 
 	var location string = os.Getenv("DEFAULTFILENAME")
@@ -103,6 +110,7 @@ func GetAll() []Jug {
 	return DB
 }
 
+// Get returns the Jug correlating to the given id
 func Get(id string) JugData {
 
 	var location string = os.Getenv("DEFAULTFILENAME")
@@ -136,16 +144,8 @@ func Get(id string) JugData {
 	return DB
 }
 
+// Delete removes the Jug correlating to the given id from the json-File
 func Delete(id string) {
-
-	/*
-		DB := GetAll()
-		for _, j := range DB {
-			if j.ID != id {
-				Write(j.ID, j.Content)
-			}
-		}
-	*/
 
 	var old_DB []Jug
 	var new_DB []Jug
