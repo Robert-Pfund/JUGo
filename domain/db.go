@@ -49,18 +49,31 @@ func Write(id string, data JugData) {
 	utilities.Check(err)
 	defer file.Close()
 
-	jug := &Jug{
+	filedata, err := os.ReadFile(location)
+	utilities.Check(err)
+
+	dec := json.NewDecoder(strings.NewReader(string(filedata)))
+	for {
+
+		if err := dec.Decode(&DB); err == io.EOF {
+			break
+		} else if err != nil {
+			utilities.Check(err)
+		}
+	}
+
+	jug := Jug{
 		ID:      id,
 		Content: data,
 	}
 
-	DB = append(DB, *jug)
+	DB = append(DB, jug)
 
-	json, err := json.Marshal(DB)
+	db_json, err := json.Marshal(DB)
 	utilities.Check(err)
 
 	log.Printf("JSON-DB from Write: %s\n", DB)
-	os.WriteFile(location, json, 0644)
+	os.WriteFile(location, db_json, 0644)
 }
 
 func GetAll() []Jug {
@@ -72,12 +85,12 @@ func GetAll() []Jug {
 	utilities.Check(err)
 	defer file.Close()
 
-	data, err := os.ReadFile(location)
+	filedata, err := os.ReadFile(location)
 	utilities.Check(err)
 
-	log.Printf("Data from GetAll: %s\n", data)
+	log.Printf("Data from GetAll: %s\n", filedata)
 
-	dec := json.NewDecoder(strings.NewReader(string(data)))
+	dec := json.NewDecoder(strings.NewReader(string(filedata)))
 	for {
 
 		if err := dec.Decode(&DB); err == io.EOF {
@@ -127,10 +140,47 @@ func Get(id string) JugData {
 
 func Delete(id string) {
 
-	DB := GetAll()
-	for _, j := range DB {
-		if j.ID != id {
-			Write(j.ID, j.Content)
+	/*
+		DB := GetAll()
+		for _, j := range DB {
+			if j.ID != id {
+				Write(j.ID, j.Content)
+			}
+		}
+	*/
+
+	var old_DB []Jug
+	var new_DB []Jug
+
+	var location string = os.Getenv("DEFAULTFILENAME")
+
+	file, err := os.Open(location)
+	utilities.Check(err)
+	defer file.Close()
+
+	filedata, err := os.ReadFile(location)
+	utilities.Check(err)
+
+	dec := json.NewDecoder(strings.NewReader(string(filedata)))
+	for {
+
+		if err := dec.Decode(&old_DB); err == io.EOF {
+			break
+		} else if err != nil {
+			utilities.Check(err)
 		}
 	}
+
+	for i, j := range old_DB {
+		if j.ID != id {
+			new_DB = append(new_DB, old_DB[i])
+		}
+	}
+
+	db_json, err := json.Marshal(new_DB)
+	utilities.Check(err)
+
+	log.Printf("JSON-DB from Write: %s\n", new_DB)
+	os.WriteFile(location, db_json, 0644)
+
 }
