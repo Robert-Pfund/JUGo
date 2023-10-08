@@ -4,8 +4,6 @@ JUGo is a simple Database written in Go. It was created for small side-projects 
 
 ! This project is still under developement and new features like only accepting unique ids might be added and bring change to some functionality of the database !
 
-Currently something about the import of the module seems to not be working, a fix is being worked on
-
 ### Installation
 
 ```sh
