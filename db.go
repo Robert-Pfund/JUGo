@@ -1,4 +1,4 @@
-package domain
+package jugo
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Robert-Pfund/JUGo/utilities"
+	"github.com/Robert-Pfund/jugo/utilities"
 	"github.com/joho/godotenv"
 )
 
@@ -18,26 +18,27 @@ type Jug struct {
 
 type JugData interface{}
 
-// Needed before calling other JUGo-functions. Sets up:
+// Connect sets up files needed before calling other JUGo-functions:
 //
-// (1) .env-File (creates one, if not-existant) and sets DEFAULTFILENAME for the jug.json-File
+// (1) .env-File (creates one, if not-existent) and sets DEFAULTFILENAME for the jug.json-File
 //
 // (2) the data-directory and jug.json-File in which the Jugs will be stored
 func Connect() {
 
-	defaultlocation := "data/jug.json"
+	defaultLocation := "data/jug.json"
 
-	var envexists bool = utilities.CheckForFile(".env")
-	if !envexists {
+	exists := utilities.CheckForFile(".env")
+	if !exists {
 		jug, err := os.Create(".env")
 		utilities.Check(err)
 
-		env, err := godotenv.Unmarshal("DEFAULTFILENAME=" + defaultlocation)
+		env, err := godotenv.Unmarshal("DEFAULTFILENAME=" + defaultLocation)
 		utilities.Check(err)
 		err = godotenv.Write(env, ".env")
 		utilities.Check(err)
 
-		jug.Close()
+		err = jug.Close()
+		utilities.Check(err)
 	}
 
 	file := utilities.SetupJSONFile()
@@ -52,7 +53,7 @@ func Save(id string, data JugData) {
 
 // Edit rewrites data correlating to the given id to the json-File
 //
-// Internally Edit is just Save preceeded by a Delete of the previous entry correlating to the given id
+// Internally Edit is just Save preceded by a Delete of the previous entry correlating to the given id
 func Edit(id string, data JugData) {
 
 	Write(id, data, 1)
@@ -67,11 +68,16 @@ func Write(id string, data JugData, mode int) {
 
 	var DB []Jug
 
-	var location string = os.Getenv("DEFAULTFILENAME")
+	location := os.Getenv("DEFAULTFILENAME")
 
 	file, err := os.Open(location)
 	utilities.Check(err)
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(file)
 
 	filedata, err := os.ReadFile(location)
 	utilities.Check(err)
@@ -93,22 +99,28 @@ func Write(id string, data JugData, mode int) {
 
 	DB = append(DB, jug)
 
-	db_json, err := json.Marshal(DB)
+	dbJson, err := json.Marshal(DB)
 	utilities.Check(err)
 
 	log.Printf("JSON-DB from Write: %s\n", DB)
-	os.WriteFile(location, db_json, 0644)
+	err = os.WriteFile(location, dbJson, 0644)
+	utilities.Check(err)
 }
 
 // GetAll returns a list of all Jugs saved to the json-File
 func GetAll() []Jug {
 
-	var location string = os.Getenv("DEFAULTFILENAME")
+	location := os.Getenv("DEFAULTFILENAME")
 	var DB []Jug
 
 	file, err := os.Open(location)
 	utilities.Check(err)
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(file)
 
 	filedata, err := os.ReadFile(location)
 	utilities.Check(err)
@@ -131,12 +143,17 @@ func GetAll() []Jug {
 // Get returns the Jug correlating to the given id
 func Get(id string) JugData {
 
-	var location string = os.Getenv("DEFAULTFILENAME")
+	location := os.Getenv("DEFAULTFILENAME")
 	var DB []Jug
 
 	file, err := os.Open(location)
 	utilities.Check(err)
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(file)
 
 	data, err := os.ReadFile(location)
 	utilities.Check(err)
@@ -165,14 +182,19 @@ func Get(id string) JugData {
 // Delete removes the Jug correlating to the given id from the json-File
 func Delete(id string) {
 
-	var old_DB []Jug
-	var new_DB []Jug
+	var oldDb []Jug
+	var newDb []Jug
 
-	var location string = os.Getenv("DEFAULTFILENAME")
+	location := os.Getenv("DEFAULTFILENAME")
 
 	file, err := os.Open(location)
 	utilities.Check(err)
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Panic(err)
+		}
+	}(file)
 
 	filedata, err := os.ReadFile(location)
 	utilities.Check(err)
@@ -180,23 +202,25 @@ func Delete(id string) {
 	dec := json.NewDecoder(strings.NewReader(string(filedata)))
 	for {
 
-		if err := dec.Decode(&old_DB); err == io.EOF {
+		if err := dec.Decode(&oldDb); err == io.EOF {
 			break
 		} else if err != nil {
 			utilities.Check(err)
 		}
 	}
 
-	for i, j := range old_DB {
+	for i, j := range oldDb {
 		if j.ID != id {
-			new_DB = append(new_DB, old_DB[i])
+			newDb = append(newDb, oldDb[i])
 		}
 	}
 
-	db_json, err := json.Marshal(new_DB)
+	dbJson, err := json.Marshal(newDb)
 	utilities.Check(err)
 
-	log.Printf("JSON-DB from Write: %s\n", new_DB)
-	os.WriteFile(location, db_json, 0644)
-
+	log.Printf("JSON-DB from Write: %s\n", newDb)
+	err = os.WriteFile(location, dbJson, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

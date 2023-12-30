@@ -11,17 +11,18 @@ func SetupJSONFile() string {
 	err := godotenv.Load()
 	Check(err)
 
-	var defaultfilename string = os.Getenv("DEFAULTFILENAME")
+	defaultFilename := os.Getenv("DEFAULTFILENAME")
 
-	var fileExists bool = CheckForFile(defaultfilename)
+	fileExists := CheckForFile(defaultFilename)
 
 	if !fileExists {
-		jug, err := os.Create(defaultfilename)
+		jug, err := os.Create(defaultFilename)
 		Check(err)
-		jug.Close()
+		err = jug.Close()
+		Check(err)
 	}
 
-	return defaultfilename
+	return defaultFilename
 }
 
 func CheckForFile(filename string) bool {
