@@ -1,4 +1,4 @@
-module github.com/Robert-Pfund/JUGo
+module github.com/Robert-Pfund/jugo
 
 go 1.20
 

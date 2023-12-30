@@ -1,21 +1,16 @@
-package example
+package main
 
-import "github.com/Robert-Pfund/JUGo/domain"
+import "github.com/Robert-Pfund/jugo"
 
 type Booking struct {
 	Firstname string
 	Lastname  string
 }
 
-type Whatever struct {
-	Idk   int
-	Hello string
-}
-
-func RunTest() {
+func RunExample() {
 
 	// Setup jug.json and .env
-	domain.Connect()
+	jugo.Connect()
 
 	//--------------------------------------
 
@@ -25,10 +20,10 @@ func RunTest() {
 	}
 
 	// Save some custom struct to json-File
-	domain.Save("001", b1)
+	jugo.Save("001", b1)
 
 	// Read some data from json-File by id
-	domain.Get("001")
+	jugo.Get("001")
 
 	//--------------------------------------
 
@@ -37,30 +32,30 @@ func RunTest() {
 		Lastname:  "Johnson",
 	}
 
-	domain.Save("002", b2)
+	jugo.Save("002", b2)
 
 	// Read all data from json-File
-	domain.GetAll()
+	jugo.GetAll()
 
 	//--------------------------------------
 
-	domain.GetAll()
+	jugo.GetAll()
 
 	// Delete some data from json-File by id
-	domain.Delete("001")
+	jugo.Delete("001")
 
-	domain.GetAll()
+	jugo.GetAll()
 
 	//--------------------------------------
 
-	b2_new := Booking{
+	b2New := Booking{
 		Firstname: "Erich",
 		Lastname:  "Haupt",
 	}
 
-	domain.Get("002")
+	jugo.Get("002")
 
-	domain.Edit("002", b2_new)
+	jugo.Edit("002", b2New)
 
-	domain.Get("002")
+	jugo.Get("002")
 }
